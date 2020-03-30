@@ -1,5 +1,11 @@
 // Read in Samples.json from the github repo.
 
+/**
+ * Takes in a single entry from the samples property of the top level object in samples.json
+ * and returns an array of objects where each one has an otu id, value, and label.
+ * Return array is sorted descending.
+ * @param {Object} subjectData
+ */
 function getSortedOtus(subjectData) {
   var otus = [];
   subjectData.sample_values.forEach((sample_value, index) => {
@@ -64,6 +70,10 @@ function makeBarChart(otus) {
   return Plotly.newPlot("bar", data, layout);
 }
 
+/**
+ * Uses Plotly to plot the bubble chart in the dashboard area
+ * @param {array} otus - Array of objects as getSortedOtus outputs
+ */
 function makeBubbleChart(otus) {
   var trace1 = {
     x: otus.map(otu => {
@@ -99,6 +109,14 @@ function makeBubbleChart(otus) {
   Plotly.newPlot("bubble", data, layout);
 }
 
+function displayDemographicInfo(subjectMetadata) {
+  metadata_div = d3.select("#sample-metadata");
+  Object.entries(subjectMetadata).forEach(([key, value], index) => {
+    metadata_div.append("div").text(`${key} : ${value}`);
+  });
+}
+
+// Load data directly from the hosted source on github.
 d3.json(
   "https://raw.githubusercontent.com/CollectionOfAtoms/plotly-challenge/master/data/samples.json"
 ).then(samples => {
@@ -113,4 +131,5 @@ d3.json(
 
   makeBarChart(otus);
   makeBubbleChart(otus);
+  displayDemographicInfo(subjectMetadata);
 });
