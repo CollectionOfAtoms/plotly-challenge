@@ -109,6 +109,48 @@ function makeBubbleChart(otus) {
   Plotly.newPlot("bubble", data, layout);
 }
 
+function makeGaugeChart(wfreq) {
+  var data = [
+    {
+      type: "indicator",
+      mode: "gauge+number",
+      value: wfreq,
+      title: {
+        text: "Bellybutton Washing Frequency per Week",
+        font: { size: 24 }
+      },
+      gauge: {
+        bar: {
+          color: "lightgray",
+          thickness: 0.2,
+          line: {
+            color: "black",
+            width: 1
+          }
+        },
+        bgcolor: "white",
+        borderwidth: 2,
+        bordercolor: "gray",
+        axis: { range: [0, 9] },
+        steps: [
+          { range: [0, 1], color: "#aa8148" },
+          { range: [1, 2], color: "#a88745" },
+          { range: [2, 3], color: "#a58c43" },
+          { range: [3, 4], color: "#a09343" },
+          { range: [4, 5], color: "#9a9943" },
+          { range: [5, 6], color: "#939f45" },
+          { range: [6, 7], color: "#8ba549" },
+          { range: [7, 8], color: "#81ab4f" },
+          { range: [8, 9], color: "#75b157" }
+        ]
+      }
+    }
+  ];
+
+  var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+  Plotly.newPlot("gauge", data, layout);
+}
+
 function populateDropdown(ids) {
   var select = d3.select("#selDataset");
   ids.forEach(id => {
@@ -142,6 +184,7 @@ function optionChanged(currentId) {
 
     makeBarChart(otus);
     makeBubbleChart(otus);
+    makeGaugeChart(subjectMetadata.wfreq);
     displayDemographicInfo(subjectMetadata);
   });
 }
@@ -150,23 +193,8 @@ function optionChanged(currentId) {
 d3.json(
   "https://raw.githubusercontent.com/CollectionOfAtoms/plotly-challenge/master/data/samples.json"
 ).then(samples => {
-  console.log(samples);
-
   populateDropdown(samples.names);
 
   currentId = d3.select("#selDataset").property("value");
-  currentIdIndex = samples.names.indexOf(currentId);
-
-  // Testing on first subject, but should replace index with the value from the corresponding field
-  // once proof of concept is established
-  var subjectData = samples.samples[currentIdIndex];
-  var subjectMetadata = samples.metadata[currentIdIndex];
-
-  var otus = getSortedOtus(subjectData);
-
-  makeBarChart(otus);
-  makeBubbleChart(otus);
-  displayDemographicInfo(subjectMetadata);
+  optionChanged(currentId);
 });
-
-// d3.select("#selDataset").on("change", optionChanged)
