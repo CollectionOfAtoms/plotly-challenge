@@ -109,10 +109,40 @@ function makeBubbleChart(otus) {
   Plotly.newPlot("bubble", data, layout);
 }
 
+function populateDropdown(ids) {
+  var select = d3.select("#selDataset");
+  ids.forEach(id => {
+    select
+      .append("option")
+      .attr("value", id)
+      .text(id);
+  });
+}
+
 function displayDemographicInfo(subjectMetadata) {
   metadata_div = d3.select("#sample-metadata");
+  metadata_div.text("");
   Object.entries(subjectMetadata).forEach(([key, value], index) => {
     metadata_div.append("div").text(`${key} : ${value}`);
+  });
+}
+
+function optionChanged(currentId) {
+  d3.json(
+    "https://raw.githubusercontent.com/CollectionOfAtoms/plotly-challenge/master/data/samples.json"
+  ).then(samples => {
+    currentIdIndex = samples.names.indexOf(currentId);
+
+    // Testing on first subject, but should replace index with the value from the corresponding field
+    // once proof of concept is established
+    var subjectData = samples.samples[currentIdIndex];
+    var subjectMetadata = samples.metadata[currentIdIndex];
+
+    var otus = getSortedOtus(subjectData);
+
+    makeBarChart(otus);
+    makeBubbleChart(otus);
+    displayDemographicInfo(subjectMetadata);
   });
 }
 
@@ -122,10 +152,15 @@ d3.json(
 ).then(samples => {
   console.log(samples);
 
+  populateDropdown(samples.names);
+
+  currentId = d3.select("#selDataset").property("value");
+  currentIdIndex = samples.names.indexOf(currentId);
+
   // Testing on first subject, but should replace index with the value from the corresponding field
   // once proof of concept is established
-  var subjectData = samples.samples[0];
-  var subjectMetadata = samples.metadata[0];
+  var subjectData = samples.samples[currentIdIndex];
+  var subjectMetadata = samples.metadata[currentIdIndex];
 
   var otus = getSortedOtus(subjectData);
 
@@ -133,3 +168,5 @@ d3.json(
   makeBubbleChart(otus);
   displayDemographicInfo(subjectMetadata);
 });
+
+// d3.select("#selDataset").on("change", optionChanged)
