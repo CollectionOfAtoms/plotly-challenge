@@ -30,7 +30,7 @@ function getSortedOtus(subjectData) {
  * Uses Plotly to plot to the corresponding dashboard area
  * @param {array} otus - Array of objects as getSortedOtus outputs
  */
-function makeBarChart(otus) {
+function makeBarChart(otus, id) {
   //Break out the top 10 sorted OTUs
   var top10Otus = otus.slice(0, 10);
   xData = top10Otus
@@ -64,7 +64,7 @@ function makeBarChart(otus) {
 
   var layout = {
     autosize: true,
-    title: "Most Common Bacterial Strains"
+    title: `Test Subject ${id}'s Most Common Bacterial Strains`
   };
 
   return Plotly.newPlot("bar", data, layout);
@@ -182,7 +182,7 @@ function optionChanged(currentId) {
 
     var otus = getSortedOtus(subjectData);
 
-    makeBarChart(otus);
+    makeBarChart(otus, currentId);
     makeBubbleChart(otus);
     makeGaugeChart(subjectMetadata.wfreq);
     displayDemographicInfo(subjectMetadata);
