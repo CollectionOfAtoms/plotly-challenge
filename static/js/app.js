@@ -90,7 +90,6 @@ function makeBubbleChart(otus) {
       color: otus.map(otu => {
         return otu.id;
       }),
-      opacity: [1, 0.8, 0.6, 0.4],
       size: otus.map(otu => {
         return otu.value;
       })
@@ -102,6 +101,9 @@ function makeBubbleChart(otus) {
   var layout = {
     xaxis: {
       title: "OTU Label"
+    },
+    yaxis: {
+      title: "Number of Occurences Found in Sample"
     },
     showlegend: false
   };
